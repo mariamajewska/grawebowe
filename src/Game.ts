@@ -16,11 +16,15 @@ export class Game {
     private readonly lineThickness: number;
     //**długość liniii */
     private readonly lineLength: number;
-
     //*Tablica wszystkich linii */
     private readonly poziomeLinie: Line[];
     private readonly pionoweLinie: Line[];
 
+    //Gracze 
+   private readonly gracz1: Player = new Player ("red")
+   private readonly gracz2: Player = new Player ("blue")
+
+   private turaGracza1: boolean = true
 
     /** Constructor. Nowa gra, ustalam liczbe planszy, rysuje na canvasie */
     constructor(canvas: HTMLCanvasElement, columnNumber: number, rowNumber: number, lineThickness: number, lineLength: number) {
@@ -50,10 +54,47 @@ export class Game {
         console.log("Someone clicked in position x: " + clickPosition.x + " y: " + clickPosition.y);
 
 
-        if (this.pionoweLinie[2].CheckForCollision(clickPosition))  { 
+        for (let y = 0; y <this.pionoweLinie.length; y++) 
+        {
             
-            console.log ("j")   
+            if (this.pionoweLinie[y].CheckForCollision(clickPosition))  { 
+            if (this.turaGracza1 === true){
+                
+                this.turaGracza1 = false
+                this.context.strokeStyle = this.gracz1.kolorgracza
+                this.pionoweLinie[y].Draw(this.context) 
+            }
+            else {
+
+                this.turaGracza1 = true
+                this.context.strokeStyle = this.gracz2.kolorgracza
+                this.pionoweLinie[y].Draw(this.context)
+            }
+            return //jeżeli grzacz kliknie i zostanie znaleziona kolizja dla pierwszej fukcji to nie będzie już tego wykobywał
+        }               
+            
         }
+
+
+        for (let x = 0; x <this.poziomeLinie.length; x++) 
+        {
+    
+            if (this.poziomeLinie[x].CheckForCollision(clickPosition))  {
+
+               if (this.turaGracza1 === true){
+                
+                this.turaGracza1= false
+                this.context.strokeStyle = this.gracz1.kolorgracza
+                this.poziomeLinie[x].Draw(this.context) 
+            }
+            else {
+
+                this.turaGracza1 = true
+                this.context.strokeStyle = this.gracz2.kolorgracza
+                this.poziomeLinie[x].Draw(this.context)
+            }
+            }
+    }
     }
 
     //**Pętle które tworzą linie poziome i pionowe przez co tworzą plansze do gry */
@@ -65,6 +106,7 @@ export class Game {
                 const newLine = new Line(this.lineThickness, lineStart, lineEnd);
                 newLine.Draw(this.context);
                 this.poziomeLinie[(x * this.columnNumber) + y] = newLine;
+                
             }
         }
 

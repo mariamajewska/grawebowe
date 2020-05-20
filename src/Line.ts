@@ -42,13 +42,6 @@ export class Line
     {
         return this.endA.y == this.endB.y;
     }
-
-      /**sprawdzam czy linia jest pionowa */
-    IsVertical (): boolean
-    {
-        return this.endA.y == this.endB.y;
-    }
-
     
     Draw(context: CanvasRenderingContext2D)
     {
