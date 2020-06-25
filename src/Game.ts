@@ -60,28 +60,28 @@ export class Game {
     JakSieKwadratyZamykaja(linia: number, jestpozioma: boolean): MozliweZamknieciaKwadratow {
         if (jestpozioma) {
             const clickedLine = this.poziomeLinie[linia];
-            let isSquareAbove = false;
-            let isSquareUnder = false;
+            let jakKwadratNad = false;
+            let jakKwadratPod = false;
 
-            const lineUnder = this.poziomeLinie.length < linia + 1 ? null : this.poziomeLinie[linia + 1];
-            const lineAbove = 0 > linia - 1 ? null : this.poziomeLinie[linia - 1];
+            const LiniaPod = this.poziomeLinie.length < linia + 1 ? null : this.poziomeLinie[linia + 1];
+            const LiniaNad = 0 > linia - 1 ? null : this.poziomeLinie[linia - 1];
 
-            if (lineAbove.owner != null) {
-                const lineLeft = 0 > linia - 1 ? null : this.pionoweLinie[linia - 1];
-                const lineRight = this.pionoweLinie.length < linia + this.rowNumber - 1 ? null : this.pionoweLinie[linia + this.rowNumber - 1];
-                if(lineLeft != null && lineRight != null) isSquareAbove = true;
+            if (LiniaNad.owner != null) {
+                const liniaLewa = 0 > linia - 1 ? null : this.pionoweLinie[linia - 1];
+                const liniaPrawa = this.pionoweLinie.length < linia + this.rowNumber - 1 ? null : this.pionoweLinie[linia + this.rowNumber - 1];
+                if(liniaLewa != null && liniaPrawa != null) jakKwadratNad = true;
             }
 
-            if (lineUnder.owner != null) {
-                const lineLeft = this.pionoweLinie.length < linia ? null : this.pionoweLinie[linia];
-                const lineRight = this.pionoweLinie.length < linia + this.rowNumber ? null : this.pionoweLinie[linia + this.rowNumber];
-                if(lineLeft != null && lineRight != null) isSquareUnder = true;
+            if (LiniaPod.owner != null) {
+                const LiniaLewa = this.pionoweLinie.length < linia ? null : this.pionoweLinie[linia];
+                const liniaPrawa = this.pionoweLinie.length < linia + this.rowNumber ? null : this.pionoweLinie[linia + this.rowNumber];
+                if(LiniaLewa != null && liniaPrawa != null) jakKwadratPod = true;
             }
 
-            if(isSquareAbove){
-                if(isSquareUnder) return MozliweZamknieciaKwadratow.kwadratypion;
+            if(jakKwadratNad){
+                if(jakKwadratPod) return MozliweZamknieciaKwadratow.kwadratypion;
                 else return MozliweZamknieciaKwadratow.kwadratgora;
-            }else if(isSquareUnder){
+            }else if(jakKwadratPod){
                 return MozliweZamknieciaKwadratow.kwadratdol;
             }else{
                 return MozliweZamknieciaKwadratow.pustakreskapoziompion
@@ -89,28 +89,28 @@ export class Game {
         }
         else {
             const clickedLine = this.pionoweLinie[linia];
-            let isSquareRight = false;
-            let isSquareLeft = false;
+            let jakKwadratPrawy = false;
+            let jakKradratLewy = false;
 
-            const lineLeft = 0 > linia + this.rowNumber ? null : this.pionoweLinie[linia + this.rowNumber];
-            const lineRight = 0 > linia - this.rowNumber ? null : this.pionoweLinie[linia - this.rowNumber];
+            const liniaLewa = 0 > linia + this.rowNumber ? null : this.pionoweLinie[linia + this.rowNumber];
+            const liniaPrawa = 0 > linia - this.rowNumber ? null : this.pionoweLinie[linia - this.rowNumber];
 
-            if (lineRight.owner != null) {
-                const lineUnder = this.poziomeLinie.length < linia + 1 ? null : this.poziomeLinie[linia + 1];
-                const lineAbove = this.poziomeLinie.length < linia ? null : this.poziomeLinie[linia];
-                if(lineUnder != null && lineAbove != null) isSquareRight = true;
+            if (liniaPrawa.owner != null) {
+                const liniaPod = this.poziomeLinie.length < linia + 1 ? null : this.poziomeLinie[linia + 1];
+                const liniaNad = this.poziomeLinie.length < linia ? null : this.poziomeLinie[linia];
+                if(liniaPod != null && liniaNad != null) jakKwadratPrawy = true;
             }
 
-            if (lineLeft.owner != null) {
-                const lineUnder = 0 > (linia - this.rowNumber) + 1 ? null : this.poziomeLinie[(linia - this.rowNumber) + 1];
-                const lineAbove = 0 > linia - this.rowNumber ? null : this.poziomeLinie[linia - this.rowNumber];
-                if(lineUnder != null && lineAbove != null) isSquareLeft = true;
+            if (liniaLewa.owner != null) {
+                const liniaPod = 0 > (linia - this.rowNumber) + 1 ? null : this.poziomeLinie[(linia - this.rowNumber) + 1];
+                const liniaNad = 0 > linia - this.rowNumber ? null : this.poziomeLinie[linia - this.rowNumber];
+                if(liniaPod != null && liniaNad != null) jakKradratLewy = true;
             }
 
-            if(isSquareRight){
-                if(isSquareLeft) return MozliweZamknieciaKwadratow.kwadratypoziom;
+            if(jakKwadratPrawy){
+                if(jakKradratLewy) return MozliweZamknieciaKwadratow.kwadratypoziom;
                 else return MozliweZamknieciaKwadratow.kwadratprawy;
-            }else if(isSquareLeft){
+            }else if(jakKradratLewy){
                 return MozliweZamknieciaKwadratow.kwadratlewy;
             }else{
                 return MozliweZamknieciaKwadratow.pustakreskapoziompion
