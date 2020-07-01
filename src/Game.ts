@@ -66,16 +66,16 @@ export class Game {
             const LiniaPod = this.poziomeLinie.length < linia + 1 ? null : this.poziomeLinie[linia + 1];
             const LiniaNad = 0 > linia - 1 ? null : this.poziomeLinie[linia - 1];
 
-            if (LiniaNad.owner != null) {
+            if (LiniaNad != null && LiniaNad.owner != null) {
                 const liniaLewa = 0 > linia - 1 ? null : this.pionoweLinie[linia - 1];
                 const liniaPrawa = this.pionoweLinie.length < linia + this.rowNumber - 1 ? null : this.pionoweLinie[linia + this.rowNumber - 1];
-                if(liniaLewa != null && liniaPrawa != null) jakKwadratNad = true;
+                if (liniaLewa != null && liniaLewa.owner != null && liniaPrawa != null && liniaPrawa.owner != null) jakKwadratNad = true;
             }
 
-            if (LiniaPod.owner != null) {
-                const LiniaLewa = this.pionoweLinie.length < linia ? null : this.pionoweLinie[linia];
+            if (LiniaPod != null && LiniaPod.owner != null) {
+                const liniaLewa = this.pionoweLinie.length < linia ? null : this.pionoweLinie[linia];
                 const liniaPrawa = this.pionoweLinie.length < linia + this.rowNumber ? null : this.pionoweLinie[linia + this.rowNumber];
-                if(LiniaLewa != null && liniaPrawa != null) jakKwadratPod = true;
+                if (liniaLewa != null && liniaLewa.owner != null && liniaPrawa != null && liniaPrawa.owner != null) jakKwadratPod = true;
             }
 
             if(jakKwadratNad){
@@ -92,19 +92,19 @@ export class Game {
             let jakKwadratPrawy = false;
             let jakKradratLewy = false;
 
-            const liniaLewa = 0 > linia + this.rowNumber ? null : this.pionoweLinie[linia + this.rowNumber];
-            const liniaPrawa = 0 > linia - this.rowNumber ? null : this.pionoweLinie[linia - this.rowNumber];
+            const liniaLewa = 0 > linia - this.rowNumber ? null : this.pionoweLinie[linia - this.rowNumber];
+            const liniaPrawa = 0 > linia + this.rowNumber ? null : this.pionoweLinie[linia + this.rowNumber];
 
-            if (liniaPrawa.owner != null) {
+            if (liniaPrawa != null && liniaPrawa.owner != null) {
                 const liniaPod = this.poziomeLinie.length < linia + 1 ? null : this.poziomeLinie[linia + 1];
                 const liniaNad = this.poziomeLinie.length < linia ? null : this.poziomeLinie[linia];
-                if(liniaPod != null && liniaNad != null) jakKwadratPrawy = true;
+                if (liniaPod != null && liniaPod.owner != null && liniaNad != null && liniaNad.owner != null) jakKwadratPrawy = true;
             }
 
-            if (liniaLewa.owner != null) {
+            if (liniaLewa != null && liniaLewa.owner != null) {
                 const liniaPod = 0 > (linia - this.rowNumber) + 1 ? null : this.poziomeLinie[(linia - this.rowNumber) + 1];
                 const liniaNad = 0 > linia - this.rowNumber ? null : this.poziomeLinie[linia - this.rowNumber];
-                if(liniaPod != null && liniaNad != null) jakKradratLewy = true;
+                if (liniaPod != null && liniaPod.owner != null && liniaNad != null && liniaNad.owner != null) jakKradratLewy = true;
             }
 
             if(jakKwadratPrawy){
@@ -146,7 +146,10 @@ export class Game {
                         this.pionoweLinie[y].Draw(this.context)
                         this.pionoweLinie[y].owner = this.gracz2
                     }
-                    return //jeżeli grzacz kliknie i zostanie znaleziona kolizja dla pierwszej fukcji to nie będzie już tego wykobywał
+
+                    this.ObslozZamkniecieKwadratu(this.JakSieKwadratyZamykaja(y, false), y)
+
+                    return //jeżeli grzacz kliknie i zostanie znaleziona kolizja dla pierwszej fukcji to nie będzie już tego wykonywał
                 }
             }
         }
@@ -171,13 +174,76 @@ export class Game {
                         this.poziomeLinie[x].Draw(this.context)
                         this.poziomeLinie[x].owner = this.gracz2
                     }
+
+                    this.ObslozZamkniecieKwadratu(this.JakSieKwadratyZamykaja(x, true), x)
                 }
             }
         }
     }
 
+    private ObslozZamkniecieKwadratu(zamkniecie: MozliweZamknieciaKwadratow, idLini: number): void
+    {
+        // dodajemy punky
+        switch (zamkniecie) {
+            case MozliweZamknieciaKwadratow.kwadratdol:
+            case MozliweZamknieciaKwadratow.kwadratgora:
+            case MozliweZamknieciaKwadratow.kwadratlewy:
+            case MozliweZamknieciaKwadratow.kwadratprawy:
+                if (this.turaGracza1){
+                    this.gracz1.punkty++;
+                    console.log("gracz 1 +1 pkt");
+                } else{
+                    this.gracz2.punkty++;
+                    console.log("gracz 2 +1 pkt");
+                }
+                break;
+            case MozliweZamknieciaKwadratow.kwadratypion:
+            case MozliweZamknieciaKwadratow.kwadratypoziom:
+                if (this.turaGracza1){
+                    this.gracz1.punkty += 2;
+                    console.log("gracz 1 +2 pkt");
+                } else{
+                    this.gracz2.punkty += 2;
+                    console.log("gracz 2 +2 pkt");
+                }
+                break;
+        }
+
+        // rysujemy kwadraty
+        switch (zamkniecie)
+        {
+            case MozliweZamknieciaKwadratow.kwadratdol:
+                this.NarysojKwadrat(this.poziomeLinie[idLini].endA, this.poziomeLinie[idLini + 1].endB, this.turaGracza1 ? "blue" : "red");
+                break;
+            case MozliweZamknieciaKwadratow.kwadratgora:
+                this.NarysojKwadrat(this.poziomeLinie[idLini].endA, this.poziomeLinie[idLini - 1].endB, this.turaGracza1 ? "blue" : "red");
+                break;
+            case MozliweZamknieciaKwadratow.kwadratlewy:
+                this.NarysojKwadrat(this.pionoweLinie[idLini].endB, this.poziomeLinie[idLini - this.columnNumber].endA, this.turaGracza1 ? "blue" : "red");
+                break;
+            case MozliweZamknieciaKwadratow.kwadratprawy:
+                this.NarysojKwadrat(this.pionoweLinie[idLini].endB, this.poziomeLinie[idLini + this.columnNumber].endA, this.turaGracza1 ? "blue" : "red");
+                break;
+            case MozliweZamknieciaKwadratow.kwadratypion:
+                this.NarysojKwadrat(this.poziomeLinie[idLini].endA, this.poziomeLinie[idLini + 1].endB, this.turaGracza1 ? "blue" : "red");
+                this.NarysojKwadrat(this.poziomeLinie[idLini].endA, this.poziomeLinie[idLini - 1].endB, this.turaGracza1 ? "blue" : "red");
+                break;
+            case MozliweZamknieciaKwadratow.kwadratypoziom:
+                this.NarysojKwadrat(this.pionoweLinie[idLini].endB, this.poziomeLinie[idLini - this.columnNumber].endA, this.turaGracza1 ? "blue" : "red");
+                this.NarysojKwadrat(this.pionoweLinie[idLini].endB, this.poziomeLinie[idLini + this.columnNumber].endA, this.turaGracza1 ? "blue" : "red");
+                break;
+        }
+    }
+
+    private NarysojKwadrat(lewyGorny: Vector2, prawyDolny: Vector2, kolor: string): void
+    {
+        this.context.fillStyle = kolor;
+        this.context.fillRect(lewyGorny.x, lewyGorny.y, prawyDolny.x - lewyGorny.x, prawyDolny.y - lewyGorny.y)
+    }
+
     //**Pętle które tworzą linie poziome i pionowe przez co tworzą plansze do gry */
     private CreateBoxes(): void {
+        this.context.strokeStyle = "white";
         for (let x = 0; x < this.columnNumber; x++) {
             for (let y = 0; y < this.rowNumber; y++) {
                 const lineStart = new Vector2(x * this.lineLength, y * this.lineLength);
