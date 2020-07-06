@@ -1,4 +1,5 @@
 /**punkt */
+// używamy po to żeby nie pisać za każdym razem x i y/
 export class Vector2
 {
     public readonly x: number;

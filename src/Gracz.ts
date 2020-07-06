@@ -1,5 +1,5 @@
 
-export class Player
+export class Gracz 
 {
     public punkty: number
     public readonly kolorgracza: string

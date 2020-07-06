@@ -1,4 +1,4 @@
-import { Player } from "./Player";
+import { Gracz } from "./Gracz";
 import { Vector2 } from "./Vector2";
 
 /**Clasa odpowiadająca za wszystkie linie*/
@@ -11,7 +11,7 @@ export class Line
     /**drugi koniec lini */
     public readonly endB: Vector2;
     /**Zanim nikt nie kliknie na linie, player jest ustawiony na null */
-    public owner: Player = null;
+    public owner: Gracz = null;
     
     /** constructor tworzy nowe linie, linie muszą być albo pionowe albo poziome*/
     constructor(thickness: number, endA: Vector2, endB: Vector2)
@@ -27,7 +27,7 @@ export class Line
     /**sprawdzam czy linia została kliknięta*/
     CheckForCollision(point: Vector2): boolean
     {
-        if (this.IsHorizontal())
+        if (this.jestHoryzontalna())
         {
             return (Math.abs(point.y - this.endA.y) <= this.thickness) && ((point.x < this.endA.x && point.x > this.endB.x) || (point.x > this.endA.x && point.x < this.endB.x));
         }
@@ -38,12 +38,12 @@ export class Line
     }
 
     /**sprawdzam czy linia jest pozioma */
-    IsHorizontal(): boolean
+    jestHoryzontalna(): boolean
     {
         return this.endA.y == this.endB.y;
     }
     
-    Draw(context: CanvasRenderingContext2D)
+    Rysuj(context: CanvasRenderingContext2D)
     {
         let originalWidth = context.lineWidth;
         context.lineWidth = this.thickness;
